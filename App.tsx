@@ -1,30 +1,14 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
+import 'react-native-gesture-handler';
 import React from 'react';
 import type { PropsWithChildren } from 'react';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
   useColorScheme,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import Navbar from './components/Navbar';
+import MainNavigation from './Navigation/MainNavigation';
+import AuthProvider from './Auth/AuthContext';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -34,20 +18,9 @@ type SectionProps = PropsWithChildren<{
 function App(): JSX.Element {
   return (
     <>
-    <View
-      style={{
-        display:'flex',
-        flex:1,
-        backgroundColor:'black',
-        position:'relative',
-        flexDirection:'column'
-      }}
-    >
-      <Text
-        style={{color:'red',flex:1,backgroundColor:'white'}}
-      >hi this is sahil khan</Text>
-      <Navbar/>
-    </View>
+      <AuthProvider>
+        <MainNavigation />
+      </AuthProvider>
     </>
   );
 }
