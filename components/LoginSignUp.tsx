@@ -10,6 +10,8 @@ import { Avatar } from '@react-native-material/core'
 import RNFetchBlob from 'rn-fetch-blob'
 import { AuthContext } from '../Auth/AuthContext'
 import { handleOtp } from '../utils/fetchFromApi'
+import { getGenericPassword } from 'react-native-keychain'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 export interface FormData {
     [key: string]: string;
 }
@@ -21,6 +23,14 @@ const LoginSignUp = () => {
     const [otp, setOtp] = React.useState(false)
 
     // authentication 
+    const session = async () => {
+        const sessionUser = await AsyncStorage.getItem('session')
+        console.log(sessionUser)
+    }
+    React.useEffect(() => {
+        session()
+    }, [AsyncStorage])
+
     const { signUpApi, LoginApi } = useContext(AuthContext)
 
     // ImagePicker function to pic image from device 
@@ -46,7 +56,6 @@ const LoginSignUp = () => {
         }
         setData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
-    console.log(data)
     return (
         <View
             style={{

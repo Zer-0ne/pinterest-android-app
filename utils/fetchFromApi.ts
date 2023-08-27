@@ -1,5 +1,7 @@
 import { Alert } from "react-native";
 import { BASE_URL } from "./constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+// import * as keychain
 
 export const pins = async () => {
     try {
@@ -148,9 +150,9 @@ export const fetchCSRFtoken = async () => {
 
     }
 }
+
 export const LoginApi = async (data: login) => {
     try {
-        const { username, password } = data
         const csrfTokenResponse = await fetch(`${BASE_URL}/auth/csrf`, {
             method: 'GET',
             headers: {
@@ -158,24 +160,30 @@ export const LoginApi = async (data: login) => {
             }
         });
         const { csrfToken } = await csrfTokenResponse.json()
-        const csrf = await csrfToken.csrfToken
-        console.log(csrfToken)
-        const response = await fetch(`${BASE_URL}/auth/signin/Credentials`, {
+
+        const response = await fetch(`${BASE_URL}/auth/callback/credentials`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                csrf,
-                username,
-                password,
-                json: true
+                ...data,
+                csrfToken,
+                json: 'true'
             })
         })
-        const responseData = await response.json()
-        console.log(responseData)
         if (response.ok) {
-            return responseData
+            const session = await fetch(`${BASE_URL}/auth/session`, {
+                method: 'GET',
+                headers: {
+                    'Content_Type': 'application/json'
+                }
+            })
+            if (session.ok) {
+                const sessionUser = await session.json()
+                AsyncStorage.setItem('session', JSON.stringify(sessionUser))
+                return sessionUser
+            }
         }
     } catch (error) {
         console.log(error)
