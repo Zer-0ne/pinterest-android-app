@@ -17,8 +17,8 @@ const CustomModal = ({ isDark, children }: { isDark: boolean; children: React.Re
             <ScrollView
                 style={{
                     width: '80%',
-                    minHeight: 400,
-                    maxHeight: 500,
+                    minHeight: 300,
+                    maxHeight: 450,
                     backgroundColor: isDark ? colors.postCardContainerColor : colors.postCardContainerColorLight,
                     shadowColor: 'black',
                     elevation: 5,

@@ -7,12 +7,14 @@ import Profile from '../components/Profile'
 import { Dimensions, View } from 'react-native'
 import { PinStack } from '../Navigation/StackNavigation'
 import LoginSignUp from '../components/LoginSignUp'
+import Create from '../components/Create'
 
-export const BASE_URL = 'https://pinterest-phi.vercel.app/api'
+export const BASE_URL = 'https://pinterest-phi.vercel.app/api';
+
 export const navbar = [
     {
         name: 'homeStack',
-        icon: (focused: boolean, color: string, isDark: boolean) => (<AntDesign
+        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps) => (<AntDesign
             name='home'
             style={[styles.iconStyle, commonStyle.color(`${focused ? 'red' : isDark ? 'white' : 'black'}`), {
                 justifyContent: 'center',
@@ -23,28 +25,39 @@ export const navbar = [
     },
     {
         name: 'create',
-        icon: (focused: boolean, color: string, isDark: boolean) => (<View
+        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps) => (<View
             style={[styles.addStyle, {
-                borderColor: isDark ? colors.lightBlack : colors.lightWhite,
+                borderColor: isDark ? focused ? colors.darkRedTransparent : colors.lightBlack : focused ? colors.darkRedTransparent : colors.lightWhite,
                 borderWidth: 5,
+                backgroundColor: focused ? 'black' : colors.darkRed,
+
             }]}
         ><MaterialIcons
                 name='add'
                 style={[styles.iconStyle, { ...commonStyle.color(`${focused ? 'red' : isDark ? 'white' : 'black'}`) }, {
                     fontSize: 30,
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                 }]}
             /></View>),
-        component: PinStack
+        component: Create
     },
     {
         name: 'profileStack',
-        icon: (focused: boolean, color: string, isDark: boolean) => (<Avatar
-            size={30}
-            label={`hi`}
-            color={`${colors.darkGray}`}
-        />),
-        component: LoginSignUp
+        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps) => {
+            return (
+                <>
+                    {
+                        session &&
+                        <Avatar
+                            size={30}
+                            image={{ uri: session && session.user.image }}
+                            color={`${colors.darkGray}`}
+                        />
+                    }
+                </>
+            )
+        },
+        component: Profile
     },
 ]
 export interface itemProps {
@@ -129,3 +142,12 @@ export const logIn = [
         type: 'password'
     }
 ]
+export interface SessionProps {
+    user: {
+        name: string;
+        email: string;
+        image: string;
+        id: string
+    }
+    expires: string
+}

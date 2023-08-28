@@ -1,11 +1,24 @@
 import { View, Text, useColorScheme } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { navbar } from '../utils/constants'
+import { SessionProps, navbar, userProps } from '../utils/constants'
 import { colors } from '../utils/styles'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const Tab = createBottomTabNavigator()
+
 const TabNavigation = () => {
+    const [session, setSession] = React.useState<SessionProps>()
     const isDark = useColorScheme() === 'dark'
+    const handleSession = async () => {
+        const sessionUser = await AsyncStorage.getItem('session')
+        if (sessionUser) {
+            setSession(JSON.parse(sessionUser))
+        }
+    }
+    React.useEffect(() => {
+        handleSession()
+    }, [handleSession]);
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -24,7 +37,8 @@ const TabNavigation = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     borderColor: 'transparent',
-                    zIndex:1000
+                    zIndex: 1000,
+                    elevation: 0
                 },
                 headerShown: false
             }}
@@ -41,12 +55,15 @@ const TabNavigation = () => {
                                     }}
                                 >
                                     {
-                                        item.icon(focused, color, isDark)
+                                        item.icon(focused, color, isDark, session)
                                     }
                                 </View>
                             </>
                         ),
-                    }} />
+                    }}
+
+                        initialParams={(item.name === 'profileStack') && (session && session.user)}
+                    />
                 ))
             }
         </Tab.Navigator>

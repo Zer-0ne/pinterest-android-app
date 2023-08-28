@@ -10,8 +10,8 @@ import { Avatar } from '@react-native-material/core'
 import RNFetchBlob from 'rn-fetch-blob'
 import { AuthContext } from '../Auth/AuthContext'
 import { handleOtp } from '../utils/fetchFromApi'
-import { getGenericPassword } from 'react-native-keychain'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import BodyContainer from './BodyContainer'
 export interface FormData {
     [key: string]: string;
 }
@@ -57,14 +57,7 @@ const LoginSignUp = () => {
         setData((prevFormData) => ({ ...prevFormData, [name]: value }));
     }
     return (
-        <View
-            style={{
-                backgroundColor: isDark ? 'black' : colors.whiteBackground,
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}
-        >
+        <BodyContainer>
             {/* Modal */}
             <CustomModal
                 isDark={isDark}
@@ -247,7 +240,8 @@ const LoginSignUp = () => {
                     </View>
                 </View>
             </CustomModal >
-        </View >
+        </BodyContainer>
+
     )
 }
 

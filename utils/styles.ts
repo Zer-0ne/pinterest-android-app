@@ -27,7 +27,8 @@ export const colors = {
     postCardContainerColorLight: '#e2eafc',
     whiteBackground: '#edf2fb',
     saveRedBtn: 'rgb(173, 8, 27)',
-    verifiedBtnColor:'rgb(0, 149, 246)'
+    verifiedBtnColor:'rgb(0, 149, 246)',
+    darkRedTransparent:'#d9042938'
 }
 export const commonStyle = {
     // common styles

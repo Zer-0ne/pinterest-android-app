@@ -24,6 +24,10 @@ ios/.xcode.env.local
 
 # Android/IntelliJ
 #
+__tests__/
+.bundle
+android/
+ios/
 build/
 .idea
 .gradle
