@@ -239,7 +239,10 @@ const LoginSignUp = () => {
                                     marginBottom: 15
                                 }}
                                 disabled={isDisabled}
-                                onPress={login ? handleLogin : () => signUpApi(data, setIsDisabled, toast, id)}
+                                onPress={login ? handleLogin : () => {
+                                    let id = toast.show("please wait...");
+                                    signUpApi(data, setIsDisabled, toast, id)
+                                }}
                             >
                                 <Text
                                     style={{
