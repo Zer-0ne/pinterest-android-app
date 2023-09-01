@@ -15,8 +15,10 @@ const ImageCard = ({ item }: {
             <TouchableOpacity
                 style={{
                     margin: 7,
+                    // marginStart:10,
+                    // marginEnd:10,
+                    overflow:'hidden',
                     borderRadius: 16,
-                    overflow: 'hidden'
                 }}
                 onPress={() => {
                     navigation.navigate("Post", {
@@ -25,7 +27,7 @@ const ImageCard = ({ item }: {
                     })
                 }}
             >
-                <AutoHeightImage source={{ uri: item && item.image }} width={191} />
+                <AutoHeightImage style={{  }} source={{ uri: item && item.image }} width={183} />
             </TouchableOpacity >
         </>
     )
