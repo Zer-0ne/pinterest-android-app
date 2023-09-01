@@ -4,23 +4,31 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SessionProps, navbar, userProps } from '../utils/constants'
 import { colors } from '../utils/styles'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useIsFocused } from '@react-navigation/native'
+import LoginSignUp from '../components/LoginSignUp'
+import { signOut } from '../utils/fetchFromApi'
 const Tab = createBottomTabNavigator()
 
 const TabNavigation = () => {
-    const [session, setSession] = React.useState<SessionProps>()
+    const [session, setSession] = React.useState<SessionProps | null | undefined>()
     const isDark = useColorScheme() === 'dark'
     const handleSession = async () => {
-        const sessionUser = await AsyncStorage.getItem('session')
-        if (sessionUser) {
-            setSession(JSON.parse(sessionUser))
-        }
+        const sessionUser = await AsyncStorage.getItem('session') as string
+        setSession(JSON.parse(sessionUser))
     }
+    const isFocused = useIsFocused()
+    // handleSession()
     React.useEffect(() => {
         handleSession()
-    }, [handleSession]);
-
+    }, [isFocused]);
     return (
         <Tab.Navigator
+            screenListeners={{
+                state: (e) => {
+                    // Do something with the state
+                    handleSession()
+                },
+            }}
             screenOptions={{
                 tabBarShowLabel: false,
                 tabBarStyle: {
@@ -46,7 +54,7 @@ const TabNavigation = () => {
 
             {
                 navbar.map((item, index) => (
-                    <Tab.Screen key={index} name={item.name} component={item.component} options={{
+                    <Tab.Screen key={index} name={item.name} component={['profileStack', 'create'].includes(item.name) ? session ?  item.component :  LoginSignUp : item.component} options={{
                         tabBarIcon: ({ focused, color }: { focused: boolean, color: string }) => (
                             <>
                                 <View
@@ -66,7 +74,7 @@ const TabNavigation = () => {
                     />
                 ))
             }
-        </Tab.Navigator>
+        </Tab.Navigator >
     )
 }
 

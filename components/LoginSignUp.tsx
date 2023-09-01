@@ -2,7 +2,7 @@ import { View, Text, useColorScheme, Modal, FlexAlignType, ViewStyle, TextInput,
 import React, { useContext } from 'react'
 import { colors, commonStyle } from '../utils/styles'
 import CustomModal from './CustomModal'
-import { logIn, signUp } from '../utils/constants'
+import { SessionProps, data, logIn, signUp } from '../utils/constants'
 import { TextInputProps } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -12,25 +12,31 @@ import { AuthContext } from '../Auth/AuthContext'
 import { handleOtp } from '../utils/fetchFromApi'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import BodyContainer from './BodyContainer'
-export interface FormData {
-    [key: string]: string;
-}
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { useToast } from 'react-native-toast-notifications'
+
 const LoginSignUp = () => {
+    const [session, setSession] = React.useState<SessionProps>()
     const isDark = useColorScheme() === 'dark'
     const [login, setLogin] = React.useState(true)
     const [image, setimage] = React.useState('')
-    const [data, setData] = React.useState<FormData>()
+    const [data, setData] = React.useState<data>()
     const [otp, setOtp] = React.useState(false)
+    const [isDisabled, setIsDisabled] = React.useState(false)
+    const toast = useToast();
+    const navigation = useNavigation()
+
+    // get path name
+    const route = useRoute();
 
     // authentication 
-    const session = async () => {
-        const sessionUser = await AsyncStorage.getItem('session')
-        console.log(sessionUser)
+    const sessions = async () => {
+        const sessionUser = await AsyncStorage.getItem('session') as string
+        setSession(JSON.parse(sessionUser))
     }
     React.useEffect(() => {
-        session()
+        sessions()
     }, [AsyncStorage])
-
     const { signUpApi, LoginApi } = useContext(AuthContext)
 
     // ImagePicker function to pic image from device 
@@ -55,6 +61,14 @@ const LoginSignUp = () => {
             (!value) ? setOtp(false) : setOtp(true)
         }
         setData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    }
+
+    const handleLogin = async () => {
+        let id = toast.show("please wait...");
+        await LoginApi(data, setIsDisabled, toast, id);
+        const sessionUser = await AsyncStorage.getItem('session') as string
+        const user = await JSON.parse(sessionUser)
+        navigation.navigate(route.name, (route.name === 'profileStack') && { id: user?.user.id });
     }
     return (
         <BodyContainer>
@@ -224,13 +238,14 @@ const LoginSignUp = () => {
                                     marginTop: 20,
                                     marginBottom: 15
                                 }}
+                                disabled={isDisabled}
+                                onPress={login ? handleLogin : () => signUpApi(data, setIsDisabled, toast, id)}
                             >
                                 <Text
                                     style={{
                                         ...commonStyle.saveBtnText(isDark),
                                         padding: 0
                                     }}
-                                    onPress={login ? () => LoginApi(data) : () => signUpApi(data)}
                                 >
                                     {login ? 'Login' : 'Signup'}
                                 </Text>

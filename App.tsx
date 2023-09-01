@@ -1,14 +1,11 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import type { PropsWithChildren } from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import {
-  useColorScheme,
-  View,
-} from 'react-native';
-
+import { ToastProvider } from 'react-native-toast-notifications'
 import MainNavigation from './Navigation/MainNavigation';
 import AuthProvider from './Auth/AuthContext';
+import SplashScreen from './components/SplashScreen';
+import Toast from './components/Toast';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -16,11 +13,20 @@ type SectionProps = PropsWithChildren<{
 
 
 function App(): JSX.Element {
+  
   return (
     <>
-      <AuthProvider>
-        <MainNavigation />
-      </AuthProvider>
+      <ToastProvider
+        placement="top"
+        animationType='zoom-in'
+        animationDuration={250}
+        swipeEnabled={true}
+        // renderToast={(toastOptions) => <Toast options={toastOptions} />}
+      >
+        <AuthProvider>
+          <MainNavigation />
+        </AuthProvider>
+      </ToastProvider>
     </>
   );
 }

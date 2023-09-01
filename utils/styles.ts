@@ -1,4 +1,5 @@
 import { Dimensions, StyleSheet, useColorScheme } from "react-native";
+import { Animated } from "react-native";
 import { View, ViewStyle, FlexAlignType } from 'react-native';
 import { IconProps } from "react-native-vector-icons/Icon";
 export const colors = {
@@ -27,8 +28,8 @@ export const colors = {
     postCardContainerColorLight: '#e2eafc',
     whiteBackground: '#edf2fb',
     saveRedBtn: 'rgb(173, 8, 27)',
-    verifiedBtnColor:'rgb(0, 149, 246)',
-    darkRedTransparent:'#d9042938'
+    verifiedBtnColor: 'rgb(0, 149, 246)',
+    darkRedTransparent: '#d9042938'
 }
 export const commonStyle = {
     // common styles
@@ -144,9 +145,24 @@ export const commonStyle = {
     }),
     verifiedBtn: {
         color: colors.verifiedBtnColor,
-        fontSize:16
+        fontSize: 16
     },
-    
+    loaderContainer: (isDark: boolean, spin: Animated.AnimatedInterpolation<string | number>) => ({
+        width: 45,
+        height: 45,
+        borderRadius: 50 / 2,
+        backgroundColor: isDark ? colors.postCardContainerColor : colors.postCardContainerColorLight,
+        position: 'relative',
+        transform: [{ rotate: spin }]
+    } as ViewStyle),
+    loaderBall: (isDark: boolean) => ({
+        width: 10,
+        height: 10,
+        borderRadius: 10 / 2,
+        backgroundColor: isDark ? colors.darkGray : colors.lightGray,
+        position: 'absolute',
+    } as ViewStyle)
+
 }
 export const styles = StyleSheet.create({
     iconStyle: {

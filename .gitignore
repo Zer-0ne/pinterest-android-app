@@ -24,11 +24,12 @@ ios/.xcode.env.local
 
 # Android/IntelliJ
 #
-__tests__/
+__tests__
 .bundle
-android/
-ios/
-build/
+android/*
+app/*
+ios
+build
 .idea
 .gradle
 local.properties

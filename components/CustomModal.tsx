@@ -23,7 +23,7 @@ const CustomModal = ({ isDark, children }: { isDark: boolean; children: React.Re
                     shadowColor: 'black',
                     elevation: 5,
                     borderRadius: 15,
-                    padding:10
+                    padding:10,
                 }}
             >
                 {children}

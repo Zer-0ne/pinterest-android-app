@@ -14,7 +14,7 @@ export const BASE_URL = 'https://pinterest-phi.vercel.app/api';
 export const navbar = [
     {
         name: 'homeStack',
-        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps) => (<AntDesign
+        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps | null | undefined) => (<AntDesign
             name='home'
             style={[styles.iconStyle, commonStyle.color(`${focused ? 'red' : isDark ? 'white' : 'black'}`), {
                 justifyContent: 'center',
@@ -25,7 +25,7 @@ export const navbar = [
     },
     {
         name: 'create',
-        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps) => (<View
+        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps | null | undefined) => (<View
             style={[styles.addStyle, {
                 borderColor: isDark ? focused ? colors.darkRedTransparent : colors.lightBlack : focused ? colors.darkRedTransparent : colors.lightWhite,
                 borderWidth: 5,
@@ -43,17 +43,31 @@ export const navbar = [
     },
     {
         name: 'profileStack',
-        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps) => {
+        icon: (focused: boolean, color: string, isDark: boolean, session: SessionProps | null | undefined) => {
             return (
                 <>
-                    {
-                        session &&
-                        <Avatar
-                            size={30}
-                            image={{ uri: session && session.user.image }}
-                            color={`${colors.darkGray}`}
-                        />
-                    }
+                    <View
+                        style={{
+                            borderWidth: 1,
+                            borderColor: focused ? 'red' : 'transparent',
+                            padding: 2,
+                            borderRadius: 100000
+                        }}
+                    >
+
+                        {
+                            session ?
+                                <Avatar
+                                    size={30}
+                                    image={{ uri: session && session.user.image }}
+                                    color={`${colors.darkGray}`}
+                                /> : <Avatar
+                                    size={30}
+                                    label={`h`}
+                                    color={`${colors.darkGray}`}
+                                />
+                        }
+                    </View>
                 </>
             )
         },
@@ -74,6 +88,9 @@ export interface itemProps {
     updatedAt: string
     // }
 }
+export interface data {
+    [key: string]: any;
+}
 export interface userProps {
     name: string;
     image: string;
@@ -89,7 +106,7 @@ export interface userProps {
         userId: string;
         _id: string
     }];
-    _id: string
+    id: string
 }
 export interface commentProps {
     _id: string;
@@ -151,3 +168,20 @@ export interface SessionProps {
     }
     expires: string
 }
+export const inputForm = [
+    {
+        name: 'title',
+        placeholder: 'Add a title',
+        title: 'Title'
+    },
+    {
+        name: 'Description',
+        placeholder: 'Write the detailed description ',
+        title: 'Description'
+    },
+    {
+        name: 'tag',
+        placeholder: 'Tagged topics',
+        title: 'Tagged topics'
+    },
+]
