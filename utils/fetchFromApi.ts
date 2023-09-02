@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { BASE_URL } from "./constants";
+import { BASE_URL, userProps } from "./constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -117,13 +117,7 @@ export const signUpApi = async (data: signup, setIsDisabled: React.Dispatch<Reac
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name,
-                adminPassword,
-                email,
-                otp,
-                password,
-                username,
-                image
+                ...data
             })
         });
         if (response.ok) {
@@ -149,23 +143,6 @@ interface login {
 interface csrf {
     data: {
         csrfToken: string
-    }
-}
-export const fetchCSRFtoken = async () => {
-    try {
-        const csrfTokenResponse = await fetch(`${BASE_URL}/auth/csrf`, {
-            method: 'GET',
-            headers: {
-                'Content_Type': 'application/json'
-            }
-        });
-        if (csrfTokenResponse.ok) {
-            const csrfTokendata = await csrfTokenResponse.data.csrfToken;
-            return csrfTokendata
-        }
-
-    } catch (error) {
-
     }
 }
 
@@ -208,7 +185,6 @@ export const LoginApi = async (data: login, setIsDisabled: React.Dispatch<React.
                     return
                 }
                 AsyncStorage.setItem('session', JSON.stringify(sessionUser))
-                console.log(sessionUser, 'ss')
                 setIsDisabled(false)
                 toast.update(id, 'Login Successfully', { type: "success" });
                 return sessionUser
@@ -317,8 +293,8 @@ export const editPin = async (_id: string, data: object, toast: ToastType, id: s
         }
         return { message: 'failed to fetch!' }
     } catch (error) {
-        return { message: 'Internal server error', error }
         toast.update(id, 'Something went wrong', { type: "danger" });
+        return { message: 'Internal server error', error }
     }
 }
 
@@ -340,5 +316,49 @@ export const follow = async (_id: string) => {
         }
     } catch (error) {
         console.error(error)
+    }
+}
+
+// create comments
+export const newComment = async (data: object) => {
+    // const id = toast.loading("Please wait...")
+    try {
+        const response = await fetch(`${BASE_URL}/comment`, {
+            method: 'POST',
+            body: JSON.stringify({ ...data }),
+        })
+        if (response.ok) {
+            const responseData = await response.json()
+            return responseData
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// delete comments
+export const deleteComment = async (
+    _id: string,
+    authorId: string,
+    itemUserId: string,
+    SessionUser: userProps
+) => {
+    try {
+        if (authorId === SessionUser?.id || itemUserId === SessionUser?.id || SessionUser?.isAdmin) {
+
+            const response = await fetch(`${BASE_URL}/comment/${_id}`, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            if (response.ok) {
+                const responseData = await response.json()
+                return responseData
+            }
+        }
+        return
+    } catch (error) {
+        console.log(error)
     }
 }

@@ -1,13 +1,26 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 import { commentProps, userProps } from '../utils/constants'
-import { singleUser } from '../utils/fetchFromApi'
+import { deleteComment, singleUser } from '../utils/fetchFromApi'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Avatar } from '@react-native-material/core'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { commonStyle } from '../utils/styles'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-
-const Comments = ({ item, isDark }: { item: commentProps, isDark: boolean }) => {
+const Comments = ({
+    item,
+    isDark,
+    userSession,
+    fetchpost,
+    authorId
+}: {
+    item: commentProps,
+    isDark: boolean,
+    userSession: userProps;
+    fetchpost: () => Promise<void>
+    authorId: string
+}) => {
     const [commentData, setCommentData] = React.useState<userProps>()
     const fetchPost = async () => {
         const data = await singleUser(item.userId)
@@ -17,12 +30,25 @@ const Comments = ({ item, isDark }: { item: commentProps, isDark: boolean }) => 
         fetchPost()
     }, [])
     const navigation = useNavigation<NavigationProp<ReactNavigation.RootParamList>>()
+
+    const handleDelete = async () => {
+        try {
+            if (userSession) {
+                await deleteComment(item._id, authorId, item.userId, userSession);
+                await fetchpost()
+                return
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <View
             style={{
                 display: 'flex',
                 flexDirection: 'row',
-                // justifyContent: 'space-between',
+                // justifyContent: 'center',
                 alignItems: 'center',
                 width: '100%',
                 paddingTop: 10,
@@ -34,13 +60,15 @@ const Comments = ({ item, isDark }: { item: commentProps, isDark: boolean }) => 
                 commentData && <Avatar
                     image={{ uri: commentData.image }}
                     size={37}
+                    style={{
+                    }}
                 />
             }
             <View
                 style={{
                     display: 'flex',
                     gap: 2,
-
+                    flex: 4
                 }}
             >
                 <TouchableOpacity
@@ -79,6 +107,20 @@ const Comments = ({ item, isDark }: { item: commentProps, isDark: boolean }) => 
                     {item.comment}
                 </Text>
             </View>
+            <TouchableOpacity
+                style={{
+                    flex: 1,
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    display: (authorId === userSession?.id || item._id === userSession?.id || userSession?.isAdmin) ? 'flex' : 'none'
+                }}
+                onPress={handleDelete}
+            >
+                <MaterialCommunityIcons
+                    name='delete'
+                    style={commonStyle.postCardBtn(isDark)}
+                />
+            </TouchableOpacity>
         </View>
     )
 }

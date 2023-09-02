@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react'
-import { FlexAlignType, ScrollView, Text, Touchable, View, ViewStyle, useColorScheme } from 'react-native'
+import { FlexAlignType, ScrollView, Text, TextInput, Touchable, View, ViewStyle, useColorScheme } from 'react-native'
 import { SessionProps, commentProps, data, itemProps, userProps } from '../utils/constants'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { deletePin, editPin, follow, pins, singlePin, singleUser } from '../utils/fetchFromApi'
+import { deletePin, editPin, follow, newComment, pins, singlePin, singleUser } from '../utils/fetchFromApi'
 import { colors, commonStyle } from '../utils/styles'
 import AutoHeightImage from 'react-native-auto-height-image'
 import { Avatar } from '@react-native-material/core'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Feather from 'react-native-vector-icons/Feather'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Comments from './Comments'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import LoginSignUp from './LoginSignUp'
-import CustomModal from './CustomModal'
 import PostForm from './PostForm'
 import PostCardLoading from './PostCardLoading'
 import { useToast } from 'react-native-toast-notifications'
@@ -36,6 +36,9 @@ const PostCard = () => {
     const [userSession, setUserSession] = React.useState<userProps>()
     const [isLoading, setIsLoading] = React.useState(true)
     const [isDisabled, setIsDisabled] = React.useState(false)
+    const [comment, setComment] = React.useState({
+        comment: ''
+    })
     const toast = useToast();
     const navigation = useNavigation()
 
@@ -153,6 +156,26 @@ const PostCard = () => {
         try {
             console.log(postUser?.id);
             await follow(postUser?.id as string);
+            await fetchPost()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // handle create comment
+    const handleComment = async () => {
+        try {
+            if (!userSession) {
+                return { message: 'login please' }
+            }
+            await newComment({
+                ...comment,
+                userId: userSession?.id,
+                pinId: postDetail?._id
+            })
+            setComment({
+                comment: ''
+            })
             await fetchPost()
         } catch (error) {
             console.log(error)
@@ -405,7 +428,7 @@ const PostCard = () => {
                                                                 paddingEnd: 10,
                                                                 backgroundColor: colors.darkGray,
                                                                 borderRadius: 10,
-                                                                display: (userSession?.id === route?.params?.authorId)?'none':'flex'
+                                                                display: (userSession?.id === route?.params?.authorId) ? 'none' : 'flex'
                                                             }}
                                                             onPress={handleFollow}
                                                         >
@@ -468,11 +491,78 @@ const PostCard = () => {
                                                             item={item}
                                                             key={index}
                                                             isDark={isDark}
+                                                            userSession={userSession as userProps}
+                                                            fetchpost={fetchPost}
+                                                            authorId={postDetail.authorId as string}
                                                         />
                                                     ))
                                                 }
                                             </ScrollView>
                                         </View>
+                                    </View>
+                                </View>
+
+                                {/* input container */}
+                                <View
+                                    style={{
+                                        ...commonStyle.cardStyle(isDark),
+                                        marginTop: 15,
+                                    } as ViewStyle}
+                                >
+                                    <View
+                                        style={{
+                                            width: '100%',
+                                            height: 40,
+                                            flexDirection: 'row',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            gap: 5
+                                        }}
+                                    >
+                                        {
+                                            userSession ?
+                                                <Avatar
+                                                    image={{ uri: userSession.image }}
+                                                    size={30}
+                                                /> : <Avatar
+                                                    size={30}
+                                                    color={`${colors.darkGray}`}
+                                                />
+                                        }
+                                        <ScrollView
+                                            horizontal={true}
+                                            scrollEnabled={false}
+
+                                        >
+                                            <TextInput
+                                                placeholder={`Add a comment for ${postUser?.username}`}
+                                                style={{
+                                                    flex: 4,
+                                                    borderBottomWidth: 1,
+                                                    borderBottomColor: isDark ? colors.transparentWhite : colors.transparentBlack,
+                                                }}
+                                                onChangeText={(value) => {
+                                                    setComment((prevValues) => ({ ...prevValues, ['comment']: value }))
+                                                }}
+                                                value={comment?.comment as string}
+                                            />
+                                        </ScrollView>
+                                        <TouchableOpacity
+                                            style={{
+                                                flex: 1,
+                                                padding: 2,
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                paddingEnd: 3,
+                                                marginEnd: 2
+                                            }}
+                                            onPress={handleComment}
+                                        >
+                                            <FontAwesome
+                                                name='send'
+                                                size={18}
+                                            />
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </View>

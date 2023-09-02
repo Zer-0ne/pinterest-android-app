@@ -63,7 +63,6 @@ export const navbar = [
                                     color={`${colors.darkGray}`}
                                 /> : <Avatar
                                     size={30}
-                                    label={`h`}
                                     color={`${colors.darkGray}`}
                                 />
                         }
