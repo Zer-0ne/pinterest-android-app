@@ -7,6 +7,7 @@ import { Avatar } from '@react-native-material/core'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { commonStyle } from '../utils/styles'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const Comments = ({
     item,
@@ -74,6 +75,9 @@ const Comments = ({
                 <TouchableOpacity
                     style={{
                         marginEnd: 4,
+                        flexDirection:'row',
+                        gap:5,
+                        alignItems:'center'
                     }}
                     onPress={() => navigation.navigate('Profile', {
                         id: item.userId,
@@ -90,6 +94,18 @@ const Comments = ({
                     >
                         {commentData && commentData.name}
                     </Text>
+                    {
+                        (commentData?.isAdmin) ? <>
+                            <MaterialIcons
+                                name='verified-user'
+                                style={commonStyle.verifiedBtn(11)}
+                            />
+                            <MaterialIcons
+                                name='verified'
+                                style={commonStyle.verifiedBtn(11)}
+                            />
+                        </> : <></>
+                    }
                 </TouchableOpacity>
                 <Text
                     style={{

@@ -74,7 +74,7 @@ const Profile = () => {
 
                         <View
                             style={{
-                                width: '90%',
+                                width: '100%',
                                 flex: 1,
                                 // backgroundColor: 'white',
                                 display: 'flex',
@@ -142,11 +142,11 @@ const Profile = () => {
                                         (user && user.isAdmin) ? <>
                                             <MaterialIcons
                                                 name='verified-user'
-                                                style={commonStyle.verifiedBtn}
+                                                style={commonStyle.verifiedBtn(16)}
                                             />
                                             <MaterialIcons
                                                 name='verified'
-                                                style={commonStyle.verifiedBtn}
+                                                style={commonStyle.verifiedBtn(16)}
                                             />
                                         </> : <></>
                                     }

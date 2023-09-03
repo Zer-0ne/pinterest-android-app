@@ -143,10 +143,10 @@ export const commonStyle = {
         fontSize: 15,
         color: isDark ? colors.lightWhite : colors.lightBlack
     }),
-    verifiedBtn: {
+    verifiedBtn: (size: number) => ({
         color: colors.verifiedBtnColor,
-        fontSize: 16
-    },
+        fontSize: size
+    }),
     loaderContainer: (isDark: boolean, spin: Animated.AnimatedInterpolation<string | number>) => ({
         width: 45,
         height: 45,

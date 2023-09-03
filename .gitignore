@@ -25,6 +25,7 @@ ios/.xcode.env.local
 # Android/IntelliJ
 #
 __tests__
+gradle.properties
 .bundle
 android/*
 app/*

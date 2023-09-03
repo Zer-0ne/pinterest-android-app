@@ -36,6 +36,8 @@ const PostCard = () => {
     const [userSession, setUserSession] = React.useState<userProps>()
     const [isLoading, setIsLoading] = React.useState(true)
     const [isDisabled, setIsDisabled] = React.useState(false)
+    const [isFocused, setIsFocused] = React.useState(false)
+    
     const [comment, setComment] = React.useState({
         comment: ''
     })
@@ -402,11 +404,11 @@ const PostCard = () => {
                                                                         (postUser.isAdmin) ? <>
                                                                             <MaterialIcons
                                                                                 name='verified-user'
-                                                                                style={commonStyle.verifiedBtn}
+                                                                                style={commonStyle.verifiedBtn(13)}
                                                                             />
                                                                             <MaterialIcons
                                                                                 name='verified'
-                                                                                style={commonStyle.verifiedBtn}
+                                                                                style={commonStyle.verifiedBtn(13)}
                                                                             />
                                                                         </> : <></>
                                                                     }
@@ -532,14 +534,16 @@ const PostCard = () => {
                                         <ScrollView
                                             horizontal={true}
                                             scrollEnabled={false}
-
                                         >
                                             <TextInput
                                                 placeholder={`Add a comment for ${postUser?.username}`}
+                                                onFocus={() => setIsFocused(true)}
+
                                                 style={{
                                                     flex: 4,
                                                     borderBottomWidth: 1,
                                                     borderBottomColor: isDark ? colors.transparentWhite : colors.transparentBlack,
+                                                    minWidth: '100%'
                                                 }}
                                                 onChangeText={(value) => {
                                                     setComment((prevValues) => ({ ...prevValues, ['comment']: value }))
