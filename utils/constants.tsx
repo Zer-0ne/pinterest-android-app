@@ -6,10 +6,10 @@ import Home from '../components/Home'
 import Profile from '../components/Profile'
 import { Dimensions, View } from 'react-native'
 import { PinStack } from '../Navigation/StackNavigation'
-import LoginSignUp from '../components/LoginSignUp'
 import Create from '../components/Create'
+import { BASE } from 'react-native-dotenv';
 
-export const BASE_URL = 'https://pinterest-phi.vercel.app/api';
+export const BASE_URL = BASE;
 
 export const navbar = [
     {
