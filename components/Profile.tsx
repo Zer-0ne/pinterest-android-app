@@ -14,6 +14,7 @@ import ProfileLoading from './ProfileLoading';
 import CustomModal from './CustomModal';
 import { Animated } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useToast } from 'react-native-toast-notifications';
 
 interface idProps {
     params: {
@@ -27,6 +28,7 @@ const Profile = () => {
     const route = useRoute() as idProps
     const [user, setUser] = React.useState<userProps>()
     const [Data, setData] = React.useState([])
+    const toast = useToast();
     const [sessionUser, setSessionUser] = React.useState('')
     const isFocused = useIsFocused()
     const navigation = useNavigation<StackNavigationProp<any>>()
@@ -53,7 +55,7 @@ const Profile = () => {
     const handleFollow = async () => {
         try {
             // console.log()
-            await follow(forFollowing as string);
+            await follow(forFollowing as string, toast);
             await fetchUser()
             await fetchData()
         } catch (error) {

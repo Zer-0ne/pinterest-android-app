@@ -298,7 +298,7 @@ export const editPin = async (_id: string, data: object, toast: ToastType, id: s
 
 
 // follow request 
-export const follow = async (_id: string) => {
+export const follow = async (_id: string, toast: ToastType) => {
     try {
         const response = await fetch(`${BASE_URL}/follow/${_id}`, {
             method: 'POST',
@@ -309,7 +309,7 @@ export const follow = async (_id: string) => {
         });
         if (response.ok) {
             const responseData = await response.json();
-            console.log(responseData)
+            toast.show((responseData.message === 'User followed successfully') ? 'Followed' : 'UnFollowed')
             return responseData;
         }
     } catch (error) {

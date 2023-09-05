@@ -57,9 +57,11 @@ const Create = () => {
                 console.log(responseData)
                 setPostForm(false)
                 setBtnDisabled(false)
+                return
             }
             setBtnDisabled(false)
             toast.update(id, 'Something went wrong ', { type: "danger" });
+            return
         } catch (error) {
             console.log({ message: error })
             toast.update(id, 'Something went wrong!', { type: "danger" });
