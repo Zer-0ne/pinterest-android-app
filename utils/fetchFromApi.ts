@@ -1,8 +1,6 @@
 import { Alert } from "react-native";
 import { BASE_URL, userProps } from "./constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
 import { ToastType } from "react-native-toast-notifications";
 // import * as keychain
 

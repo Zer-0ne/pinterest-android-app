@@ -434,7 +434,11 @@ const PostCard = () => {
                                                             }}
                                                             onPress={handleFollow}
                                                         >
-                                                            <Text>
+                                                            <Text
+                                                                style={{
+                                                                    fontSize:12
+                                                                }}
+                                                            >
                                                                 {
                                                                     (postUser?.followers?.some(async (follow: any) => {
                                                                         const sessionuser = await session() as string;
