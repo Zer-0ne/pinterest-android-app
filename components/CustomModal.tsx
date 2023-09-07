@@ -14,7 +14,7 @@ const CustomModal = ({ isDark, children }: { isDark: boolean; children: React.Re
                 alignItems: 'center' as FlexAlignType
             } as ViewStyle}
         >
-            <ScrollView
+            <View
                 style={{
                     width: '80%',
                     minHeight: 300,
@@ -26,9 +26,10 @@ const CustomModal = ({ isDark, children }: { isDark: boolean; children: React.Re
                     padding: 10,
                     // opacity: 0.8
                 }}
+                // nestedScrollEnabled={true}
             >
                 {children}
-            </ScrollView>
+            </View>
         </View>
     )
 }

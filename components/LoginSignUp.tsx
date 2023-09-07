@@ -1,4 +1,4 @@
-import { View, Text, useColorScheme, Modal, FlexAlignType, ViewStyle, TextInput, KeyboardTypeOptions } from 'react-native'
+import { View, Text, useColorScheme, Modal, FlexAlignType, ViewStyle, TextInput, KeyboardTypeOptions, ScrollView } from 'react-native'
 import React, { useContext } from 'react'
 import { colors, commonStyle } from '../utils/styles'
 import CustomModal from './CustomModal'
@@ -76,20 +76,21 @@ const LoginSignUp = () => {
             <CustomModal
                 isDark={isDark}
             >
-                <View
+                <Text
+                    style={{
+                        fontSize: 30,
+                        fontWeight: 'bold',
+                        color: isDark ? 'gray' : 'black',
+                        marginStart:10
+                    }}
+                >
+                    {login ? 'Login' : 'Signup'}
+                </Text>
+                <ScrollView
                     style={{
                         margin: 10
                     }}
                 >
-                    <Text
-                        style={{
-                            fontSize: 30,
-                            fontWeight: 'bold',
-                            color: isDark ? 'gray' : 'black'
-                        }}
-                    >
-                        {login ? 'Login' : 'Signup'}
-                    </Text>
                     <View
                         style={{
                             justifyContent: 'center',
@@ -256,7 +257,7 @@ const LoginSignUp = () => {
                         </View>
 
                     </View>
-                </View>
+                </ScrollView>
             </CustomModal >
         </BodyContainer>
 

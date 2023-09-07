@@ -55,7 +55,7 @@ const Profile = () => {
         setData(response)
     }
 
-    const handleFollow = async (_id:string) => {
+    const handleFollow = async (_id: string) => {
         try {
             setIsDisabled(true)
             if (sessionUser?.user.id === forFollowing) {
@@ -364,33 +364,47 @@ const FollowerFollowing = ({
         }
     }, [fadeAnim, isOpen]);
 
+    const stopPropagation = (e: React.TouchEvent) => {
+        e.stopPropagation();
+    };
 
     return (
         <>
             <TouchableOpacity
+                onPress={() => setIsOpen(false)}
                 activeOpacity={1}
                 style={{
                     position: 'absolute',
                     zIndex: 100,
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }}
+            />
+            <View
+                style={{
+                    position: 'absolute',
+                    zIndex: 103,
                     left: 10,
                     right: 10,
-                    top: 50,
-                    bottom: 50,
+                    top: 150,
+                    bottom: 150,
                 }}
-                onPress={() => setIsOpen(false)}
+
 
             >
                 <Animated.View
                     style={{
                         width: '100%',
-                        height: '100%'
+                        height: '100%',
+                        zIndex: 103
                     }}
                 >
 
                     <CustomModal
                         isDark={isDark}
                     >
-                        <ScrollView>
                             <View
                                 style={{
                                     width: '100%',
@@ -451,10 +465,9 @@ const FollowerFollowing = ({
                                     </ScrollView>
                                 </View>
                             </View>
-                        </ScrollView>
                     </CustomModal>
                 </Animated.View>
-            </TouchableOpacity>
+            </View>
         </>
     )
 }
