@@ -37,7 +37,7 @@ const PostCard = () => {
     const [isLoading, setIsLoading] = React.useState(true)
     const [isDisabled, setIsDisabled] = React.useState(false)
     const [isFocused, setIsFocused] = React.useState(false)
-    
+
     const [comment, setComment] = React.useState({
         comment: ''
     })
@@ -156,8 +156,8 @@ const PostCard = () => {
 
     const handleFollow = async () => {
         try {
-            console.log(postUser?.id);
-            await follow(postUser?.id as string);
+            // console.log(postUser?.id);
+            await follow(postUser?.id as string, toast);
             await fetchPost()
         } catch (error) {
             console.log(error)
@@ -436,7 +436,7 @@ const PostCard = () => {
                                                         >
                                                             <Text
                                                                 style={{
-                                                                    fontSize:12
+                                                                    fontSize: 12
                                                                 }}
                                                             >
                                                                 {

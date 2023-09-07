@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused, useNavigation, useRoute, } from '@react-navigation/native'
 import React from 'react'
 import { BackHandler, FlexAlignType, ScrollView, Text, TouchableOpacity, View, ViewStyle, useColorScheme } from 'react-native'
-import { itemProps, userProps } from '../utils/constants';
+import { SessionProps, itemProps, userProps } from '../utils/constants';
 import { follow, signOut, singleUser, userPins } from '../utils/fetchFromApi';
 import { Avatar, Button } from '@react-native-material/core';
 import { colors, commonStyle } from '../utils/styles';
@@ -29,12 +29,13 @@ const Profile = () => {
     const [user, setUser] = React.useState<userProps>()
     const [Data, setData] = React.useState([])
     const toast = useToast();
-    const [sessionUser, setSessionUser] = React.useState('')
+    const [sessionUser, setSessionUser] = React.useState<SessionProps>()
     const isFocused = useIsFocused()
     const navigation = useNavigation<StackNavigationProp<any>>()
     const [isOpen, setIsOpen] = React.useState(false)
     const [isFollowers, setIsFollowers] = React.useState(false)
     const [forFollowing, setForFollowing] = React.useState('')
+
     // console.log(route)
     const fetchUser = async () => {
         const data = await singleUser(route.params.id)
@@ -43,7 +44,8 @@ const Profile = () => {
     }
     const session = async () => {
         const sessionUserData = await AsyncStorage.getItem('session')
-        sessionUserData && setSessionUser(sessionUserData)
+        const json = JSON.parse(sessionUserData as string)
+        sessionUserData && setSessionUser(json)
 
         return sessionUser
     }
@@ -54,6 +56,13 @@ const Profile = () => {
 
     const handleFollow = async () => {
         try {
+            if (sessionUser?.user.id === forFollowing) {
+                toast.show('You can\'t follow yourself' as string,
+                    {
+                        type: 'danger'
+                    })
+                return
+            }
             // console.log()
             await follow(forFollowing as string, toast);
             await fetchUser()
@@ -99,7 +108,7 @@ const Profile = () => {
                                 isDark={isDark}
                                 title={isFollowers ? `Followers` : 'Following'}
                                 followFollowing={isFollowers ? user.followers : user.followings as userProps['followers']}
-                                sessionUser={sessionUser}
+                                sessionUser={sessionUser as SessionProps}
                                 handleFollow={handleFollow}
                                 setForFollowing={setForFollowing}
                                 route={route}
@@ -193,6 +202,7 @@ const Profile = () => {
                                     @{user && user.username}
                                 </Text>
                             </View>
+
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -239,6 +249,34 @@ const Profile = () => {
                                     </Text>
                                 </TouchableOpacity>
                             </View>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: isDark ? colors.postCardContainerColor : colors.postCardContainerColorLight,
+                                    padding: 6,
+                                    paddingStart: 20,
+                                    paddingEnd: 20,
+                                    borderRadius: 12,
+                                    shadowColor: 'red',
+                                    display: (user?.id === sessionUser?.user.id) ? 'none' : 'flex',
+                                    width:110,
+                                    justifyContent:'center',
+                                    alignItems:'center'
+                                }}
+                                onPress={() => {
+                                    setForFollowing(route.params.id)
+                                    handleFollow()
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: isDark ? colors.lightWhite : colors.black
+                                    }}
+                                >
+                                    {
+                                        (user?.followers?.some((follow: any) => follow.userId === sessionUser?.user.id)) ? 'Following' : 'Follow'
+                                    }
+                                </Text>
+                            </TouchableOpacity>
                             {
                                 Data &&
                                 <MasonryList
@@ -273,7 +311,7 @@ const FollowerFollowing = ({
     isDark: boolean;
     title: string;
     followFollowing: userProps["followers"];
-    sessionUser: string;
+    sessionUser: SessionProps;
     handleFollow: () => Promise<void>,
     route: idProps
 }) => {
@@ -426,7 +464,7 @@ const Users = ({
         userId: string
     },
     isDark: boolean;
-    sessionUser: string;
+    sessionUser: SessionProps;
     handleFollow: () => Promise<void>;
     setForFollowing: React.Dispatch<React.SetStateAction<string>>;
     route: idProps
@@ -439,17 +477,17 @@ const Users = ({
         setUserDatails(data)
     }
 
-    const session = async () => {
-        // const sessionUser = await AsyncStorage.getItem('session') as string
-        const json = JSON.parse(sessionUser)
-        const sessionUserDetail = await singleUser(json.user.id)
-        setLoginedUser(sessionUserDetail)
-        return sessionUserDetail
-    }
+    // const session = async () => {
+    //     // const sessionUser = await AsyncStorage.getItem('session') as string
+    //     const json = JSON.parse(sessionUser)
+    //     const sessionUserDetail = await singleUser(json.user.id)
+    //     setLoginedUser(sessionUserDetail)
+    //     return sessionUserDetail
+    // }
 
     React.useEffect(() => {
         fetchUser()
-        session()
+        // session()
     }, [item])
 
     return (
@@ -537,12 +575,12 @@ const Users = ({
                     <TouchableOpacity
                         style={{
                             backgroundColor: 'transparent',
-                            display: (loginedUser?.id === userDatails?.id) ? 'none' : 'flex',
+                            display: (sessionUser.user?.id === userDatails?.id) ? 'none' : 'flex',
                         }}
                         onPress={async () => { console.log(userDatails?.id); await setForFollowing(item.userId as string); await handleFollow(); }}
                     >
                         {
-                            (userDatails?.followers?.some((follow: any) => follow.userId === loginedUser?.id)) ? <SimpleLineIcons
+                            (userDatails?.followers?.some((follow: any) => follow.userId === sessionUser.user.id)) ? <SimpleLineIcons
                                 style={{
                                     fontSize: 15,
                                     opacity: 1,
