@@ -34,7 +34,8 @@ const Profile = () => {
     const navigation = useNavigation<StackNavigationProp<any>>()
     const [isOpen, setIsOpen] = React.useState(false)
     const [isFollowers, setIsFollowers] = React.useState(false)
-    const [forFollowing, setForFollowing] = React.useState('')
+    const [forFollowing, setForFollowing] = React.useState<string>()
+    const [isDisabled, setIsDisabled] = React.useState(false)
 
     // console.log(route)
     const fetchUser = async () => {
@@ -54,23 +55,28 @@ const Profile = () => {
         setData(response)
     }
 
-    const handleFollow = async () => {
+    const handleFollow = async (_id:string) => {
         try {
+            setIsDisabled(true)
             if (sessionUser?.user.id === forFollowing) {
                 toast.show('You can\'t follow yourself' as string,
                     {
                         type: 'danger'
                     })
+                setIsDisabled(false)
                 return
             }
-            // console.log()
-            await follow(forFollowing as string, toast);
+            await follow(_id, toast);
             await fetchUser()
             await fetchData()
+            setIsDisabled(false)
+            // console.log()
         } catch (error) {
             console.log(error)
+            setIsDisabled(false)
         }
     }
+
 
     React.useEffect(() => {
         session()
@@ -110,8 +116,8 @@ const Profile = () => {
                                 followFollowing={isFollowers ? user.followers : user.followings as userProps['followers']}
                                 sessionUser={sessionUser as SessionProps}
                                 handleFollow={handleFollow}
-                                setForFollowing={setForFollowing}
                                 route={route}
+                                isDisabled={isDisabled}
                             />
                         }
 
@@ -258,13 +264,15 @@ const Profile = () => {
                                     borderRadius: 12,
                                     shadowColor: 'red',
                                     display: (user?.id === sessionUser?.user.id) ? 'none' : 'flex',
-                                    width:110,
-                                    justifyContent:'center',
-                                    alignItems:'center'
+                                    width: 110,
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
                                 }}
+                                disabled={isDisabled}
                                 onPress={() => {
-                                    setForFollowing(route.params.id)
-                                    handleFollow()
+                                    if (user) {
+                                        handleFollow(user.id)
+                                    }
                                 }}
                             >
                                 <Text
@@ -302,17 +310,17 @@ const FollowerFollowing = ({
     followFollowing,
     sessionUser,
     handleFollow,
-    setForFollowing,
-    route
+    route,
+    isDisabled
 }: {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    setForFollowing: React.Dispatch<React.SetStateAction<string>>,
     isDark: boolean;
+    isDisabled: boolean;
     title: string;
     followFollowing: userProps["followers"];
     sessionUser: SessionProps;
-    handleFollow: () => Promise<void>,
+    handleFollow: (_id: string) => Promise<void>,
     route: idProps
 }) => {
     const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -428,8 +436,8 @@ const FollowerFollowing = ({
                                                         isDark={isDark}
                                                         sessionUser={sessionUser}
                                                         handleFollow={handleFollow}
-                                                        setForFollowing={setForFollowing}
                                                         route={route}
+                                                        isDisabled={isDisabled}
                                                     />
                                                 )) : <>
                                                     <Text
@@ -456,38 +464,27 @@ const Users = ({
     isDark,
     sessionUser,
     handleFollow,
-    setForFollowing,
-    route
+    route,
+    isDisabled
 }: {
     item: {
         _id: string;
         userId: string
     },
     isDark: boolean;
+    isDisabled: boolean;
     sessionUser: SessionProps;
-    handleFollow: () => Promise<void>;
-    setForFollowing: React.Dispatch<React.SetStateAction<string>>;
+    handleFollow: (_id: string) => Promise<void>;
     route: idProps
 }) => {
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const [userDatails, setUserDatails] = React.useState<userProps>()
-    const [loginedUser, setLoginedUser] = React.useState<userProps>()
+    const [userDatails, setUserDatails] = React.useState<userProps>();
     const fetchUser = async () => {
         const data = await singleUser(item.userId)
         setUserDatails(data)
     }
-
-    // const session = async () => {
-    //     // const sessionUser = await AsyncStorage.getItem('session') as string
-    //     const json = JSON.parse(sessionUser)
-    //     const sessionUserDetail = await singleUser(json.user.id)
-    //     setLoginedUser(sessionUserDetail)
-    //     return sessionUserDetail
-    // }
-
     React.useEffect(() => {
         fetchUser()
-        // session()
     }, [item])
 
     return (
@@ -577,7 +574,8 @@ const Users = ({
                             backgroundColor: 'transparent',
                             display: (sessionUser.user?.id === userDatails?.id) ? 'none' : 'flex',
                         }}
-                        onPress={async () => { console.log(userDatails?.id); await setForFollowing(item.userId as string); await handleFollow(); }}
+                        disabled={isDisabled}
+                        onPress={async () => { await handleFollow(item.userId as string); }}
                     >
                         {
                             (userDatails?.followers?.some((follow: any) => follow.userId === sessionUser.user.id)) ? <SimpleLineIcons

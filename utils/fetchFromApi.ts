@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { BASE_URL, userProps } from "./constants";
+import { BASE_URL, SessionProps, userProps } from "./constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ToastType } from "react-native-toast-notifications";
 // import * as keychain
@@ -299,6 +299,7 @@ export const editPin = async (_id: string, data: object, toast: ToastType, id: s
 
 // follow request 
 export const follow = async (_id: string, toast: ToastType) => {
+    let id = toast.show("please wait...");
     try {
         const response = await fetch(`${BASE_URL}/follow/${_id}`, {
             method: 'POST',
@@ -309,11 +310,17 @@ export const follow = async (_id: string, toast: ToastType) => {
         });
         if (response.ok) {
             const responseData = await response.json();
-            toast.show((responseData.message === 'User followed successfully') ? 'Followed' : 'UnFollowed')
+            toast.update(id, responseData.message, { type: 'success' })
             return responseData;
+        }
+        else{
+
+            toast.update(id, 'Something Went Wrong', { type: 'danger' })
+            return
         }
     } catch (error) {
         console.error(error)
+        toast.update(id, 'Something Went Wrong', { type: 'danger' })
     }
 }
 

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Text, TouchableOpacity } from 'react-native'
+import { Dimensions, Text, TouchableOpacity } from 'react-native'
 import { View } from 'react-native'
 import AutoHeightImage from 'react-native-auto-height-image';
 import { itemProps } from '../utils/constants';
@@ -15,8 +15,8 @@ const ImageCard = ({ item }: {
             <TouchableOpacity
                 style={{
                     margin: 7,
-                    marginStart: 3,
-                    marginEnd: 3,
+                    marginStart: 5,
+                    marginEnd: 5,
                     overflow: 'hidden',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -29,7 +29,7 @@ const ImageCard = ({ item }: {
                     })
                 }}
             >
-                <AutoHeightImage style={{ borderRadius: 16, }} source={{ uri: item && item.image }} width={189} />
+                <AutoHeightImage style={{ borderRadius: 16, }} source={{ uri: item && item.image }} width={Dimensions.get('window').width / 2 - 10} />
             </TouchableOpacity >
         </>
     )
